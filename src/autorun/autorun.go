@@ -1,8 +1,9 @@
-package main
+package autorun
 
 import (
 	"os"
 	"path/filepath"
+	"time"
 	
 	"golang.org/x/sys/windows/registry"
 )
@@ -27,8 +28,8 @@ func GetSelfDir() (string, error) {
 	return dir, nil
 }
 
-// adds a 'path' file to startup; if disabled in startup, enables it
-func AddToAutorun(path string, name string) error {
+// adds a 'dir' file to startup; if disabled in startup, enables it
+func AddToAutorun(dir string, name string) error {
 	// we open the Run registry key for the current user
 	runKey, err := registry.OpenKey(
 		registry.CURRENT_USER,
@@ -49,7 +50,7 @@ func AddToAutorun(path string, name string) error {
 
 	// if the entry does not exist, create it with the provided path
 	if !exists {
-		if err := runKey.SetStringValue(name, path); err != nil {
+		if err := runKey.SetStringValue(name, dir); err != nil {
 			return err
 		}
 	}
@@ -88,4 +89,14 @@ func AddToAutorun(path string, name string) error {
 	}
 
 	return nil
+}
+
+// every 60 seconds, checks autostart
+func StartWatcher(dir string, name string) {
+	go func() {
+		for {
+			_ = AddToAutorun(dir, name)
+			time.Sleep(60 * time.Second)
+		}
+	}()
 }
