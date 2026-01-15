@@ -33,29 +33,4 @@ if errorlevel 1 (
     )
 )
 
-if exist "clipper.exe" (
-    echo Compressing...
-    where upx >nul 2>&1
-    if errorlevel 1 (
-        echo UPX not found, skipping compression
-    ) else (
-        upx --best clipper.exe >nul 2>&1
-        if errorlevel 1 (
-            echo UPX compression failed
-        )
-    )
-    
-    echo.
-    
-    for %%F in ("clipper.exe") do (
-        set "size=%%~zF"
-        echo File size: ^!size:~0,-6!.!size:~-6,1!MB^
-    )
-    
-    echo.
-    echo Success!
-) else (
-    echo ERROR: clipper.exe was not created!
-)
-
 pause
