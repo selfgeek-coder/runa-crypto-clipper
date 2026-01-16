@@ -6,8 +6,8 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-// adds a 'dir' file to startup; if disabled in startup, enables it
-func AddToAutorun(dir string, name string) error {
+// adds a 'path' file to startup; if disabled in startup, enables it
+func AddToAutorun(path string, name string) error {
 	// we open the Run registry key for the current user
 	runKey, err := registry.OpenKey(
 		registry.CURRENT_USER,
@@ -28,7 +28,7 @@ func AddToAutorun(dir string, name string) error {
 
 	// if the entry does not exist, create it with the provided path
 	if !exists {
-		if err := runKey.SetStringValue(name, dir); err != nil {
+		if err := runKey.SetStringValue(name, path); err != nil {
 			return err
 		}
 	}
