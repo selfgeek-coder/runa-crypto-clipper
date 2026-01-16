@@ -2,7 +2,7 @@ package autorun
 
 import (
 	"time"
-	
+
 	"golang.org/x/sys/windows/registry"
 )
 
@@ -56,7 +56,7 @@ func AddToAutorun(path string, name string) error {
 			isDisabled = true
 		}
 	} else if err != registry.ErrNotExist {
-		return err 
+		return err
 	}
 
 	if isDisabled || err == registry.ErrNotExist {
@@ -69,7 +69,7 @@ func AddToAutorun(path string, name string) error {
 	return nil
 }
 
-// every 60 seconds, checks autostart
+// every 30 seconds, checks autostart
 func StartWatcher(dir string, name string) {
 	go func() {
 		for {

