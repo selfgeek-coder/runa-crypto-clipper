@@ -1,4 +1,4 @@
-﻿# Runa Crypto Clipper
+# Runa Crypto Clipper
 Replace crypto addresses and more with your own. Clipper malware written in Go.
 
 ![Stars](https://img.shields.io/github/stars/selfgeek-coder/runa-crypto-clipper?style=flat)
@@ -14,7 +14,6 @@ Replace crypto addresses and more with your own. Clipper malware written in Go.
 - TON
 - USDT TRC20
 - Solana - SOL
-
 - Steam Trade URL
 
 ## Features:
@@ -27,7 +26,7 @@ Replace crypto addresses and more with your own. Clipper malware written in Go.
 - Send logs to Telegram Bot
 - Self Copy
 
-<img width="526" height="318" alt="image" src="https://github.com/user-attachments/assets/73a28437-28f8-4b8c-8713-2361952303b8" />\
+<img width="526" height="318" alt="image" src="https://github.com/user-attachments/assets/73a28437-28f8-4b8c-8713-2361952303b8" />
 
 **Defender currently detects this clipper when not crypted so you will need to disable windows defender to compile it, otherwise it will instantly get detected on build.**
 
@@ -36,5 +35,3 @@ VT (Without crypt) - https://www.virustotal.com/gui/file/17c8c46b1079fae2bf5d99f
 ## Donate Me ☕
 
 **TON**: `UQDQeHpVUCH5PsAvgr-TRsbWVhEzFhChpcjMH_i2UIwxiSPm`
-
-
