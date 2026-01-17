@@ -1,7 +1,10 @@
 ﻿# Runa Crypto Clipper
 Replace crypto addresses and more with your own. Clipper malware written in Go.
 
-**Educational purposes only.**
+![Stars](https://img.shields.io/github/stars/selfgeek-coder/runa-crypto-clipper?style=flat)
+![Watchers](https://img.shields.io/github/watchers/selfgeek-coder/runa-crypto-clipper?style=flat)
+
+⚠️ DISCLAIMER: For educational purposes and security research only. Use only on systems you own or have explicit permission to test. Any malicious use is strictly prohibited and illegal.
 
 ## Supports:
 - Bitcoin - BTC
@@ -33,4 +36,5 @@ VT (Without crypt) - https://www.virustotal.com/gui/file/17c8c46b1079fae2bf5d99f
 ## Donate Me ☕
 
 **TON**: `UQDQeHpVUCH5PsAvgr-TRsbWVhEzFhChpcjMH_i2UIwxiSPm`
+
 
