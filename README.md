@@ -1,5 +1,5 @@
 ﻿# Runa Crypto Clipper
-Replace crypto addresses and more with your own. Clipper malware.
+Replace crypto addresses and more with your own. Clipper malware written in Go.
 
 **Educational purposes only.**
 
@@ -33,3 +33,4 @@ VT (Without crypt) - https://www.virustotal.com/gui/file/17c8c46b1079fae2bf5d99f
 ## Donate Me ☕
 
 **TON**: `UQDQeHpVUCH5PsAvgr-TRsbWVhEzFhChpcjMH_i2UIwxiSPm`
+
