@@ -1,6 +1,8 @@
 ﻿# Runa Crypto Clipper
 Replace crypto addresses and more with your own. Clipper malware.
 
+**Educational purposes only.**
+
 ## Supports:
 - Bitcoin - BTC
 - Etherium - ETH
@@ -28,4 +30,6 @@ Replace crypto addresses and more with your own. Clipper malware.
 
 VT (Without crypt) - https://www.virustotal.com/gui/file/17c8c46b1079fae2bf5d99f502bf3bdf6b4ccef2c4e48b2d16be2667d245ca2f?nocache=1
 
-### Educational purposes only.
+## Donate Me ☕
+
+**TON**: `UQDQeHpVUCH5PsAvgr-TRsbWVhEzFhChpcjMH_i2UIwxiSPm`
