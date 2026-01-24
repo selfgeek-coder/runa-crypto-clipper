@@ -36,6 +36,11 @@ func StartClipper(chat_id string, bot_token string, matchers []Matcher, user str
 			matched := false
 			for _, matcher := range matchers {
 				if matcher.Regex.MatchString(currentContent) {
+					if matcher.Addr == "0" {
+						lastClipboardContent = currentContent
+						continue
+					}
+					
 					isAlreadyReplaced := false
 					for _, m := range matchers {
 						if m.Addr == currentContent {
