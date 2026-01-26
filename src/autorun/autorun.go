@@ -5,6 +5,7 @@ import (
 	"os/exec"
 )
 
+// adds the given path to the Task Scheduler to run at logon
 func AddToSchelduler(path, name string) error {
 	cmd := exec.Command("schtasks", 
 		"/Create", 

