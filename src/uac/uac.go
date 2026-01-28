@@ -124,34 +124,8 @@ func runAsAdmin() error {
 	return nil
 }
 
-func IsElevated() bool {
-	var token syscall.Token
-	var isElevated bool
-	var outLen uint32
 
-	proc := syscall.MustLoadDLL("ntdll.dll").MustFindProc("NtQueryInformationToken")
-
-	err := syscall.OpenProcessToken(syscall.Handle(os.Getpid()), syscall.TOKEN_QUERY, &token)
-	if err != nil {
-		return false
-	}
-	defer token.Close()
-
-	err = syscall.GetTokenInformation(token, syscall.TokenElevation, (*byte)(unsafe.Pointer(&isElevated)), 4, &outLen)
-	if err != nil {
-		ret, _, _ := proc.Call(uintptr(token), uintptr(20),
-			uintptr(unsafe.Pointer(&isElevated)),
-			uintptr(4),
-			uintptr(unsafe.Pointer(&outLen)))
-		if ret != 0 {
-			return false
-		}
-	}
-
-	return isElevated
-}
-
-func RunBypass() {
+func RunBypassUAC() {
 	if utils.IsElevated() {
 		return
 	}
@@ -167,6 +141,20 @@ func RunBypass() {
 			return
 		}
 		os.Exit(0)
+	}
+
+	os.Exit(0)
+}
+
+
+func RunDefaultUAC() {
+	if utils.IsElevated() {
+		return
+	}
+
+	err := runAsAdmin()
+	if err != nil {
+		return
 	}
 
 	os.Exit(0)

